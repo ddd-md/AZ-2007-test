@@ -442,7 +442,7 @@ GitHub アカウントを使用してVisual Studio CodeでGitHub Copilotを利�
 #### ステップ 2: README ファイルの作成
 
 1. **README を追加**
-   - リポジトリの**[コード]**タブで **[README の追加]** をクリック
+   - リポジトリの **[コード]**タブで **[README の追加]** をクリック
 
 2. **内容を入力**
    - エディターに **「Coming soon」** と入力
@@ -462,7 +462,7 @@ GitHub アカウントを使用してVisual Studio CodeでGitHub Copilotを利�
 2. **ソース管理ビューを開く**
 
 3. **変更をプル**
-   - **[その他の操作]**メニュー（省略記号「...」）をクリック
+   - **[その他の操作]** メニュー（省略記号「...」）をクリック
    - **[プル]** を選択
 
 #### ステップ 2: README ファイルの確認
@@ -515,7 +515,7 @@ GitHub Copilotを使用して、プロジェクトの包括的なREADMEドキュ
 
 1. **包括的なプロンプトを入力**
    ```plaintext
-   @workspace Generate the contents of a README.md file for the code repository. Use "Library App" as the project title. The README file should include the following sections: Description, Project Structure, Key Classes and Interfaces, Usage, License. Format all sections as raw markdown. Use a bullet list with indents to represent the project structure. Do not include ".gitignore" or the ".github", "bin", and "obj" folders.
+   @workspace このコードリポジトリのREADME.mdファイルの内容を生成してください。プロジェクトタイトルは「Library App」を使用してください。READMEファイルには以下のセクションを含めてください：説明、プロジェクト構造、主要なクラスとインターフェース、使用方法、ライセンス。すべてのセクションを生のマークダウンとして書式設定してください。プロジェクト構造はインデント付きの箇条書きを使用して表現してください。".gitignore"、".github"、"bin"、"obj"フォルダーは含めないでください。
    ```
 
 2. **生成結果の確認**
@@ -524,12 +524,6 @@ GitHub Copilotを使用して、プロジェクトの包括的なREADMEドキュ
    - 主要クラスの説明が含まれていることを確認
 
 > **💡 ヒント**: より詳細な情報が必要な場合は、セクションごとに個別のプロンプトを使用することも可能です
-
-#### ステップ 3: マークダウン編集機能の有効化
-
-1. **GitHub Copilot設定を確認**
-   - GitHub Copilotステータスメニューを開く
-   - **[Enable completions for markdown]** を選択（まだ有効になっていない場合）
 
 #### ステップ 4: README.md ファイルの更新
 
@@ -595,11 +589,11 @@ GitHub Copilotを使用して、プロジェクトの包括的なREADMEドキュ
    - メッセージボックス右側の**スパークルアイコン**をクリック
    - GitHub Copilotが以下のようなコミットメッセージを生成します：
    ```
-   Update README.md with project description, structure, key classes, usage instructions, and license information
+   README.mdを作成し、Library Appの説明、プロジェクト構造、主要なクラスとインターフェース、使用方法、ライセンス情報を追加
    ```
 
 3. **変更をステージングしてコミット**
-   - 変更されたファイル（README.md）の横にある**+**アイコンをクリックしてステージング
+   - 変更されたファイル（README.md）の横にある **+**アイコンをクリックしてステージング
    - **[コミット]**ボタンをクリック
 
 #### ステップ 2: リモートリポジトリへの同期
