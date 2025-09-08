@@ -1,531 +1,391 @@
-## パート 3: GitHub Copilot ツールを使用して単体テストを開発する
-
-### 開始する前に
-
-#### プロジェクトの概要
-
-同僚が UnitTests という名前のテスト プロジェクトを作成しました。 既存の単体テストでは、Library.ApplicationCore プロジェクトのサービス クラスが部分的にカバーされています。 Library.ApplicationCore プロジェクトには、ライブラリ管理システムのビジネス ロジックが含まれています。 UnitTests プロジェクトでは、xUnit フレームワークを使用して単体テストを記述して実行します。 また、このプロジェクトでは NSubstitute ライブラリを使用して、テスト用のモック オブジェクトを作成します。
-
-UnitTests プロジェクトを拡張して、Library.Infrastructure プロジェクトのデータ アクセス クラスをカバーする必要があります。
-
-
-#### ラボ シナリオ (パート 3)
-
-GitHub Copilot は、コードの単体テストを記述するのに役立ちます。 GitHub Copilot を使用して単体テストを生成するには、いくつかの方法があります。
-
-- **テスト ケースの生成**:GitHub Copilot を使用して、コードのテスト ケースを生成できます。 Copilot は、記述したコードに基づいてテスト ケースを提案できます。 その後、これらのテスト ケースを使用して、コードの単体テストを作成できます。
-- **テスト メソッドの生成**:Copilot では、コードのテスト メソッドを生成することもできます。 これらのテスト メソッドを使用して、コードの単体テストを作成できます。
-- **テスト アサーションの生成**:Copilot は、単体テストで使用できるアサーションを提案できます。 これらのアサーションは、コードの動作を確認するのに役立ちます。
-- **テスト モックの生成**:Copilot では、単体テストで使用できるモック オブジェクトを生成できます。 これらのモック オブジェクトは、テストするコードを依存関係から分離するのに役立ちます。
-- **テスト データの生成**:Copilot では、単体テストで使用できるテスト データを生成できます。 このテスト データは、さまざまな入力でコードをテストするのに役立ちます。
-- **テスト セットアップ コードの生成**:Copilot では、単体テストのセットアップ コードを生成できます。 このコードは、テストを実行する前にテスト環境を設定するのに役立ちます。
-- **テスト ティアダウン コードの生成**:Copilot では、単体テストのティアダウン コードを生成できます。 このコードは、テストの実行後にテスト環境をクリーンアップするのに役立ちます。
-
-このラボのパート 3 では、Library.Infrastructure プロジェクトの単体テストを開発します。
-
-パートには、次の演習が含まれます。
-
-- GitHub Copilot を使用して UnitTests プロジェクトを評価および拡張します。
-
-### 演習 7: GitHub Copilot を使用して UnitTests プロジェクトを評価および拡張する
-
-この演習では、GitHub Copilot を使用して次のタスクを完了します。
-
-1. GitHub Copilot を使用して、既存の UnitTests プロジェクトを評価します。
-
-1. UnitTests プロジェクトを拡張してデータ アクセス クラスのテストを開始します。
-
-#### タスク 1: GitHub Copilot を使用して既存の UnitTests プロジェクトを評価する
-
-現在、UnitTests プロジェクトは次のフォルダー構造を実装しています。
-
-- UnitTests\
-  - ApplicationCore\
-    - LoanService\
-      - ExtendLoan.cs
-      - ReturnLoan.cs
-    - PatronService\
-      - RenewMembership.cs
-  - LoanFactory.cs
-  - PatronFactory.cs
-
-この構造は、ApplicationCore プロジェクトの Services 部分をミラー化し、サポートします。
-
-- ApplicationCore\
-  - Services\
-    - LoanService.cs: ExtendLoan メソッドと ReturnLoan メソッドが含まれます。
-    - PatronService.cs: RenewMembership メソッドが含まれます。
-
-既存の単体テストを評価すると、Library.Infrastructure プロジェクトのデータ アクセス クラスの単体テストを開発するのに役立ちます。
-
-以下の手順に従って、演習のこのセクションを完了します。
-
-1. エディターで開いているすべてのファイルを閉じます。
-
-1. チャット ビューを開きます。
-
-1. チャット コンテキストに次のファイルを追加します: **LoanFactory.cs**、**PatronFactory.cs**、**ExtendLoan.cs**、**ReturnLoan.cs**、**RenewMembership.cs**、**LoanService.cs**、**PatronService.cs**。
-
-    ファイルは、"tests/UnitTests"、"tests/UnitTests/ApplicationCore/LoanService"、"tests/UnitTests/ApplicationCore/PatronService"、および "src/Library.ApplicationCore/Services" フォルダーにあります。
-
-1. 次のプロンプトを入力します。
-
-    ```plaintext
-    @workspace Explain the approach to unit testing that's been implemented in this workspace.
-    ```
-
-    このプロンプトは、ワークスペースのコンテキストでの単体テストのアプローチについて説明するように GitHub Copilot に求めます。 応答のコンテキストを提供するために、プロンプトにはいくつかのファイルが含まれています。
-
-1. 少し時間を取って、GitHub Copilot からの応答を確認してください。
-
-    次の説明に似た情報が提示されます。
-
-    - モックの依存関係:テストでは、NSubstitute を使用してインターフェイスのモック実装を作成します。
-    - テストの編成:テストは、テストされるメソッドに基づいて個別のファイルに編成されます。 たとえば、ExtendLoan メソッドと ReturnLoan メソッドは、LoanService フォルダーの下で個別のファイルでテストされます。
-    - アサーション:アサーションは、各テストの予想される結果を検証するために使用されます。
-    - テスト シナリオ:テストでは、入力に基づいて異なる状態を返すなど、メソッドごとにさまざまなシナリオがカバーされています。
-    - 分離性: 各テストは、副作用を防ぐために他のテストから分離されます。
-    - ファクトリ メソッド:ファクトリ メソッドは、テスト データを一貫して作成するために使用されます。
-
-1. 次のプロンプトを入力します。
-
-    ```plaintext
-    @workspace What are the benefits of this approach to unit testing?
-    ```
-
-1. 少し時間を取って、GitHub Copilot からの応答を確認してください。
-
-    次に挙げるような利点の一覧を示す説明が表示されます。
-
-    - 依存関係の分離:モックを使用すると、作業単位が依存関係から分離されます。
-    - 再現性と一貫性:ファクトリ メソッドは、テスト データを作成するための一貫した方法を提供します。
-    - 読みやすさと保守容易性:記述的なテスト メソッドとテスト ステップの明確な配置により、テストの読みやすさが向上します。
-    - 包括的なカバレッジ:さまざまなシナリオをテストすることで、コードが堅牢になり、さまざまなエッジ ケースを確実に処理できます。
-    - 懸念事項の分離:テスト ロジック自体からテスト データの作成を分離すると、テストがクリーンに保たれ、テスト対象の動作に集中できます。
-    - 即時のフィードバック:単体テストを実行すると、コードの正確性に関するフィードバックがすぐに得られます。
-
-1. チャット コンテキストに次のファイルを追加します: **ExtendLoan.cs**、**ReturnLoan.cs**、**RenewMembership.cs**、**LoanFactory.cs**、**PatronFactory.cs**、**LoanService.cs**、**PatronService.cs**。
-
-1. 次のプロンプトを入力します。
-
-    ```plaintext
-    @workspace How can I extend the `UnitTests` project to begin testing methods in the `Library.Infrastructure` project? Provide a process overview.
-    ```
-
-    このプロンプトは、UnitTests プロジェクトを拡張して、Library.Infrastructure プロジェクトでメソッドのテストを開始するためのプロセスの概要を提供するよう GitHub Copilot に求めます。 応答のコンテキストを提供するために、プロンプトにはいくつかのファイルが含まれています。
-
-1. 少し時間を取って、GitHub Copilot からの応答を確認してください。
-
-    次の説明に似た情報が提示されます。
-
-    ```markdown
-    1. Add Project Reference:
-
-      - Open the UnitTests.csproj file located at tests/UnitTests/UnitTests.csproj.
-      - Add a reference to the Library.Infrastructure project.
-
-    2. Identify methods to test:
-
-      - Identify the methods in the Library.Infrastructure project that need to be tested. For example, if you want to test the LoanService class, identify the methods in the LoanService class that need to be tested.
-
-    3. Create Test Classes:
-
-      - Create new test classes in the tests/UnitTests directory to test the methods in the Library.Infrastructure project. For example, if you want to test LoanService, create a file named LoanServiceTests.cs.
-
-    4. Write Unit Tests:
-
-      - In the newly created test classes, write unit tests for the methods in the Library.Infrastructure project. Use the xUnit framework for writing tests and NSubstitute for mocking dependencies.
-
-    5. Run Tests:
-
-      - Use Visual Studio Code's integrated terminal or the Test Explorer to run the tests.
-      - Ensure that the tests are discovered and executed correctly.
-    ```
-
-#### タスク 2: UnitTests プロジェクトを拡張してデータ アクセス クラスのテストを開始する
-
-演習のこのセクションでは、GitHub Copilot を使用して、Library.Infrastructure プロジェクトの単体テストを作成します。
-
-Library.Infrastructure プロジェクトには、ファイル システムを操作して、データを読み込んで保存するデータ アクセス クラスが含まれています。 プロジェクトには、次のクラスが含まれています。
-
-- JsonData:JSON データを読み込んで保存するクラス。
-- JsonLoanRepository:ILoanRepository インターフェイスを実装し、JsonData クラスを使用して貸し出しデータを読み込んで保存するクラス。
-- JsonPatronRepository:IPatronRepository インターフェイスを実装し、JsonData クラスを使用して利用者データを読み込んで保存するクラス。
-
-まず、JsonLoanRepository クラスの単体テストを記述します。
-
-以下の手順に従って、演習のこのセクションを完了します。
-
-1. プロジェクト ファイル **UnitTests.csproj** をチャット コンテキストに追加します。
-
-1. チャット ビューで次のプロンプトを入力します。
-
-    ```plaintext
-    @workspace Explain how to add a reference to the Library.Infrastructure project inside `UnitTests.csproj`.
-    ```
-
-    このプロンプトは、GitHub Copilot に、UnitTests.csproj ファイル内に Library.Infrastructure プロジェクトへの参照を追加する方法を説明するように求めます。
-
-1. GitHub Copilot の応答を使用して、UnitTests.csproj ファイルを更新します。
-
-    更新された UnitTests.csproj ファイルは、次の XML コードのようになります。
-
-    ```xml
-
-    <Project Sdk="Microsoft.NET.Sdk">
-      <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
-        <IsTestProject>true</IsTestProject>
-      </PropertyGroup>
-      <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-        <PackageReference Include="NSubstitute" Version="5.1.0" />
-        <PackageReference Include="xunit" Version="2.5.3" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
-      </ItemGroup>
-      <ItemGroup>
-        <Using Include="Xunit" />
-      </ItemGroup>
-      <ItemGroup>
-        <ProjectReference Include="..\..\src\Library.ApplicationCore\Library.ApplicationCore.csproj" />
-        <ProjectReference Include="..\..\src\Library.Infrastructure\Library.Infrastructure.csproj" />
-      </ItemGroup>
-    </Project>
-
-    ```
-
-1. **JsonLoanRepository.cs** ファイルを開きます。
-
-    JsonLoanRepository.csは src/Library.Infrastructure/Data/ フォルダーにあります。
-
-1. 少し時間を取って **JsonLoanRepository.cs** ファイルを確認してください。
-
-    ```csharp
-
-    using Library.ApplicationCore;
-    using Library.ApplicationCore.Entities;
-    namespace Library.Infrastructure.Data;
-    public class JsonLoanRepository : ILoanRepository
-    {
-        private readonly JsonData _jsonData;
-        public JsonLoanRepository(JsonData jsonData)
-        {
-            _jsonData = jsonData;
-        }
-        public async Task<Loan?> GetLoan(int id)
-        {
-            await _jsonData.EnsureDataLoaded();
-    
-            foreach (Loan loan in _jsonData.Loans!)
-            {
-                if (loan.Id == id)
-                {
-                    Loan populated = _jsonData.GetPopulatedLoan(loan);
-                    return populated;
-                }
-            }
-            return null;
-        }
-        public async Task UpdateLoan(Loan loan)
-        {
-            Loan? existingLoan = null;
-            foreach (Loan l in _jsonData.Loans!)
-            {
-                if (l.Id == loan.Id)
-                {
-                    existingLoan = l;
-                    break;
-                }
-            }
-            if (existingLoan != null)
-            {
-                existingLoan.BookItemId = loan.BookItemId;
-                existingLoan.PatronId = loan.PatronId;
-                existingLoan.LoanDate = loan.LoanDate;
-                existingLoan.DueDate = loan.DueDate;
-                existingLoan.ReturnDate = loan.ReturnDate;
-                await _jsonData.SaveLoans(_jsonData.Loans!);
-                await _jsonData.LoadData();
-            }
-        }
-    }
-
-    ```
-
-1. **JsonLoanRepository** クラスに関する次の詳細に注意してください。
-
-    - JsonLoanRepository クラスには、GetLoan と UpdateLoan という 2 つのメソッドが含まれています。
-    - JsonLoanRepository クラスは、JsonData オブジェクトを使用して貸し出しデータの読み込みおよび保存を行います。
-
-    まず、GetLoan メソッドの単体テストを記述します。
-
-1. **UnitTests** プロジェクトの下に次のフォルダー構造を作成します。
-
-    - Infrastructure\
-        - JsonLoanRepository\
-
-    このフォルダー構造は、Library.ApplicationCore 単体テストに使用されるアプローチを反映しています。
-
-1. JsonLoanRepository フォルダーに、**GetLoan** という名前のクラス ファイルを作成します。
-
-1. 少し時間を取って、GetLoan 単体テストのフィールド コンストラクターとクラス コンストラクターの要件を検討しましょう。
-
-    JsonLoanRepository.GetLoan メソッドは、呼び出されたときに貸し出し ID パラメーターを受け取ります。 このメソッドでは、"_jsonData.EnsureDataLoaded" を使用して最新の JSON データを取得し、"_jsonData.Loans" を使用して一致する貸し出しを検索します。 このメソッドで一致する貸し出し ID が見つかると、事前設定された貸し出しオブジェクト (populated) が返されます。 メソッドで一致する貸し出し ID を見つけることができない場合は、null 値が返されます。
-
-    GetLoan 単体テストの場合:
-
-    - モック貸し出しリポジトリ オブジェクト ("_mockLoanRepository") を使用すると、一致する ID が見つかったケースをテストできます。 検索する ID を使用してモックを読み込みます。 ReturnLoanTest クラスは、ILoanRepository インターフェイスをモックし、モック貸し出しリポジトリ オブジェクトをインスタンス化する方法を示します。
-
-    - 非モック貸し出しリポジトリ オブジェクト ("_jsonLoanRepository") を使用すると、一致する ID が見つからないケースをテストできます。 ファイルに含まれていないことがわかっている貸し出し ID を指定するだけです (100 を超えるものが機能するはずです)。
-
-    - 非モック JsonLoanRepository オブジェクトを作成するには、JsonData オブジェクトが必要です。 UnitTests プロジェクトは ConsoleApp プロジェクトによって作成された JsonData オブジェクトにアクセスできないため、IConfiguration インターフェイスを使用してオブジェクトを作成する必要があります。
-
-1. チャット コンテキストに、**JsonLoanRepository.cs**、**ReturnLoan.cs**、**LoanService.cs**、**LoanFactory.cs**、および **JsonData.cs** ファイルを追加します。
-
-1. 次のプロンプトを入力します。
-
-    ```plaintext
-    @workspace Create fields and a class constructor for the `GetLoan.cs` file. The class will be used to create unit tests for the GetLoan method in the `JsonLoanRepository.cs` file. Create the following private readonly fields: `_mockLoanRepository`, `_jsonLoanRepository`, `_configuration`, and `_jsonData`. Instantiate the fields in the `GetLoanTest` constructor. Use `ConfigurationBuilder` to create a `_configuration` object that can be used to instantiate the JsonData object.
-    ```
-
-    このプロンプトは、GitHub Copilot にフィールドとクラス コンストラクターを提案するように求めます。
-
-1. 少し時間を取って、GitHub Copilot からの応答を確認してください。
-
-    次のコード スニペットのようなコード候補が表示されます。
-
-    ```csharp
-
-    using NSubstitute;
-    using Library.ApplicationCore;
-    using Library.ApplicationCore.Entities;
-    using Library.ApplicationCore.Interfaces;
-    using Library.Infrastructure.Data;
-    using Microsoft.Extensions.Configuration;
-    namespace UnitTests.Infrastructure.JsonLoanRepository;
-    public class GetLoanTest
-    {
-        private readonly ILoanRepository _mockLoanRepository;
-        private readonly JsonLoanRepository _jsonLoanRepository;
-        private readonly IConfiguration _configuration;
-        private readonly JsonData _jsonData;
-        public GetLoanTest()
-        {
-            _mockLoanRepository = Substitute.For<ILoanRepository>();
-            _configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-            _jsonData = new JsonData(_configuration);
-            _jsonLoanRepository = new JsonLoanRepository(_jsonData);
-        }
-        // Add test methods here
-    }
-
-    ```
-
-1. GitHub Copilot から提供されるコード候補を使用して、**GetLoan.cs** を更新します。
-
-1. 次の問題に注意してください。
-
-    - コード内で、名前空間と JsonLoanRepository の使用との間に競合があります。 ReturnLoan.cs ファイルと RenewMembership.cs ファイルで使用されるパターンに従って、GetLoans.cs の名前空間を更新する必要があります。
-
-    - コードで ILoanRepository が認識されない場合は、Library.ApplicationCore の using ディレクティブをファイルの先頭に追加することが必要になる場合があります。
-
-    - _configuration オブジェクトが正しくインスタンス化されていない場合は、ConfigurationBuilder を含むコード行の更新が必要になる場合があります。 コードを簡略化して "_configuration = new ConfigurationBuilder().Build();" を使用できます。
-
-    - GitHub Copilot によって "using Library.ApplicationCore.Interfaces" が提案されている場合は、その部分をファイルの先頭から削除できます。
-
-1. 次のコード スニペットに一致するように **GetLoan.cs** ファイルを更新します。
-
-    ```csharp
-
-    using NSubstitute;
-    using Library.ApplicationCore;
-    using Library.ApplicationCore.Entities;
-    using Library.Infrastructure.Data;
-    using Microsoft.Extensions.Configuration;
-    namespace UnitTests.Infrastructure.JsonLoanRepositoryTests;
-    public class GetLoanTest
-    {
-        private readonly ILoanRepository _mockLoanRepository;
-        private readonly JsonLoanRepository _jsonLoanRepository;
-        private readonly IConfiguration _configuration;
-        private readonly JsonData _jsonData;
-        public GetLoanTest()
-        {
-            _mockLoanRepository = Substitute.For<ILoanRepository>();
-            _configuration = new ConfigurationBuilder().Build();
-            _jsonData = new JsonData(_configuration);
-            _jsonLoanRepository = new JsonLoanRepository(_jsonData);
-        }
-    }
-
-    ```
-
-    コードの更新では、前のステップで特定された問題に対処します。 プロジェクトをビルドすると、エディターで特定された問題が解決されます。
-
-1. チャット コンテキストに、**JsonLoanRepository.cs**、**ReturnLoan.cs**、**LoanService.cs**、**LoanFactory.cs**、**JsonData.cs**、**Loans.json** の各ファイルを追加します。
-
-1. GetLoan.cs ファイルの内容を選択してから、チャット ビューに次のプロンプトを入力します。
-
-    ```plaintext
-    @workspace Update the selection to include a unit test for the `JsonLoanRepository.GetLoan` method. The unit test should test the case where a loan ID is found in the data. Use `_mockLoanRepository` to arrange the expected return loan. Use `_jsonLoanRepository` to return an actual loan. Asserts should verify that the return loan ID matches the expected loan ID. Use a loan ID that exists in the `Loans.json` file.
-    ```
-
-    このプロンプトは、GitHub Copilot に対して、JsonLoanRepository.GetLoan メソッドの単体テストを提案するように求めます。 単体テストでは、データに貸し出し ID が見つかったケースをテストする必要があります。 このテストでは、"_mockLoanRepository" を使用して、想定される返却貸出、実際の貸出を返却するための "_jsonLoanRepository"、返却貸出 ID と想定される貸出 ID の一致を確認するためのアサートを用意する必要があります。 貸出 ID は、Loans.json ファイルに存在するはずです。
-
-1. 少し時間を取って、GitHub Copilot からの応答を確認してください。
-
-    次のコード スニペットのようなコード候補が表示されます。
-
-    ```csharp
-
-    using NSubstitute;
-    using Library.ApplicationCore;
-    using Library.ApplicationCore.Entities;
-    using Library.Infrastructure.Data;
-    using Microsoft.Extensions.Configuration;
-    using Xunit;
-    namespace UnitTests.Infrastructure.JsonLoanRepositoryTests;
-    public class GetLoanTest
-    {
-        private readonly ILoanRepository _mockLoanRepository;
-        private readonly JsonLoanRepository _jsonLoanRepository;
-        private readonly IConfiguration _configuration;
-        private readonly JsonData _jsonData;
-        public GetLoanTest()
-        {
-            _mockLoanRepository = Substitute.For<ILoanRepository>();
-            _configuration = new ConfigurationBuilder().Build();
-            _jsonData = new JsonData(_configuration);
-            _jsonLoanRepository = new JsonLoanRepository(_jsonData);
-        }
-        [Fact(DisplayName = "JsonLoanRepository.GetLoan: Returns loan when loan ID is found")]
-        public async Task GetLoan_ReturnsLoanWhenLoanIdIsFound()
-        {
-            // Arrange
-            var loanId = 1; // Use a loan ID that exists in the Loans.json file
-            var expectedLoan = new Loan { Id = loanId, BookItemId = 101, PatronId = 202, LoanDate = DateTime.Now, DueDate = DateTime.Now.AddDays(14) };
-            _mockLoanRepository.GetLoan(loanId).Returns(expectedLoan);
-            await _jsonData.EnsureDataLoaded(); // Ensure data is loaded
-            // Act
-            var actualLoan = await _jsonLoanRepository.GetLoan(loanId);
-            // Assert
-            Assert.NotNull(actualLoan);
-            Assert.Equal(expectedLoan.Id, actualLoan?.Id);
-        }
-    }
-
-    ```
-
-1. GitHub Copilot から提供されるコード候補を使用して、**GetLoan.cs** を更新します。
-
-    JsonLoanRepository.GetLoan メソッドは、JSON データが確実に読み込まれるように "_jsonData.EnsureDataLoaded" を呼び出します。 "_jsonData.EnsureDataLoaded" を呼び出すコード行がテスト メソッドに含まれている場合は削除できます。
-
-    コードで Loan クラスが認識されない場合は、GetLoan.cs ファイルの先頭に "using Library.ApplicationCore.Entities" ステートメントを必ず含めます。 Loan クラスは Library.ApplicationCore.Entities 名前空間にあります。
-
-1. エラーが発生しないように AccelerateDevGitHubCopilot ソリューションを構築してください。
-
-1. GitHub Copilot のオートコンプリート機能を使用して、貸し出し ID が見つからない場合のテストを作成します。
-
-    GetLoan_ReturnsLoanWhenLoanIdIsFound メソッドの後に空白行を作成します。
-
-    オートコンプリートの提案を受け入れて、新しいテスト メソッドを作成します。
-
-1. 少し時間を取って、GitHub Copilot からの応答を確認してください。
-
-    GitHub Copilot のオートコンプリート機能は、必要がない場合でも予想される貸し出しをモックする可能性があります。 想定される貸出をモックするコードは削除できますが、Loans.json ファイルに存在しない貸出 ID が必要です。
-
-    次のコード スニペットのいずれかに似たコード候補が表示されます。
-
-    ```csharp
-
-    [Fact(DisplayName = "JsonLoanRepository.GetLoan: Returns null when loan ID is not found")]
-    public async Task GetLoan_ReturnsNullWhenLoanIdIsNotFound()
-    {
-        // Arrange
-        var loanId = 999; // Use a loan ID that does not exist in the Loans.json file
-        var expectedLoan = new Loan { Id = loanId, BookItemId = 101, PatronId = 202, LoanDate = DateTime.Now, DueDate = DateTime.Now.AddDays(14) };
-        _mockLoanRepository.GetLoan(loanId).Returns(expectedLoan);
-        // Act
-        var actualLoan = await _jsonLoanRepository.GetLoan(loanId);
-        // Assert
-        Assert.Null(actualLoan);
-    }
-
-    ```
-
-1. データ セットにない loanId 値を割り当てるオートコンプリート候補を採用します。
-
-    データ セットにない loanId 番号を割り当てる候補がない場合は、**Ctrl + Enter** キーボード ショートカットを使用して追加の候補を一覧表示できます。
-
-1. 単体テストでは JSON データ ファイルへのアクセスが必要であることに注意してください。
-
-    JsonLoanRepository.GetLoan メソッドは、JsonData オブジェクトを使用して貸出データの読み込みおよび保存を行います。
-
-    JSON データ ファイルは、"Library.Console\Json" フォルダーにあります。 これらのファイルをテスト プロジェクトに含めるには、UnitTests.csproj ファイルを更新する必要があります。
-
-1. 次の XML スニペットを **UnitTests.csproj** ファイルに追加します。
-
-    ```xml
-
-    <ItemGroup>
-        <None Include="..\..\src\Library.Console\Json\**\*">
-            <Link>Json\%(RecursiveDir)%(FileName)%(Extension)</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-
-    ```
-
-    これにより、テストの実行時に JSON データ ファイルが出力ディレクトリにコピーされます。
-
-#### タスク 3: 作業を確認する
-
-JsonLoanRepository クラスの単体テストを実行するには、いくつかの方法があります。 Visual Studio Code のテスト エクスプローラー、統合ターミナル、または "dotnet test" コマンドを使用できます。
-
-以下の手順に従って、演習のこのセクションを完了します。
-
-1. GetLoans.cs ファイルがエディターで開かれていることを確認します。
-
-1. ソリューションをビルドし、エラーがないことを確認します。
-
-    **AccelerateDevGitHubCopilot** を右クリックし、**[ビルド]** を選択します。
-
-1. テスト メソッドの左側にある "緑色の再生ボタン" に注目してください。
-
-1. Visual Studio Code のテスト エクスプローラー ビューを開きます。
-
-    テスト エクスプローラー ビューを開くには、左側のアクティビティ バーにあるビーカー型のアイコンを選択します。 テスト エクスプローラーには、ユーザー インターフェイスで [テスト] というラベルが付けられています。
-
-    テスト エクスプローラーは、ワークスペース内のすべてのテスト ケースを表示するツリー ビューです。 テスト ケースを実行/デバッグし、テスト エクスプローラーを使用してテスト結果を表示できます。
-
-1. **UnitTests** とその下のノードを展開して、**GetLoanTest** を見つけます。
-
-1. 次を実行します: **JsonLoanRepository.GetLoan:Returns loan when loan ID is found** テスト ケース。
-
-    > [!NOTE]
-    > GitHub Copilot では、テスト メソッドの名前が異なる場合があります。 データに存在する貸出 ID を使用するテスト メソッドを実行します。
-
-1. テスト エクスプローラー ビューとエディターのテスト結果に注目してください。
-
-    テストに合格したことを示す緑色のチェックマークが表示されます。
-
-1. エディターを使用して、次を実行します: **JsonLoanRepository.GetLoan:Returns null when loan ID is not found** テスト ケース。
-
-1. テスト エクスプローラー ビューとエディターのテスト結果に注目してください。
-
-    エディターからテストを実行するには、テスト メソッドの左側にある緑色の再生ボタンを選択します。
-
-1. **JsonLoanRepository.GetLoan:Returns null when loan ID is not found** テストに合格していることを確認します。
-
-    両方のテストの左側に緑色のチェックマークが表示されているはずです。
-
-#### まとめ - 演習 7
-
-この演習では、GitHub Copilot を使用して既存の UnitTests プロジェクトを評価し、プロジェクトを拡張して Library.Infrastructure プロジェクトのデータ アクセス クラスのテストを開始しました。 UnitTests.csproj ファイルに Library.Infrastructure プロジェクトへの参照を追加し、JsonLoanRepository クラスの単体テストを作成しました。 GitHub Copilot を使用することで、JsonLoanRepository クラスの GetLoan メソッドの単体テストを記述できるようになりました。 Visual Studio Code のテスト エクスプローラーを使用して単体テストを実行し、テストがパスすることを確認しました。
-
+# パート3: GitHub Copilot ツールを使用して単体テストを開発する
+
+## 概要
+
+このパートでは、GitHub Copilotを活用して図書館管理システムの単体テストを開発します。既存のサービス層のテストに加えて、データアクセス層（Library.Infrastructure）の包括的なテストを作成し、コード品質の向上を図ります。
+
+### 学習目標
+- GitHub Copilotを使用した効率的な単体テスト作成
+- xUnitフレームワークとNSubstituteライブラリの実践的活用
+- テスト駆動開発（TDD）の理解
+- データアクセス層のテスト設計パターンの習得
+
+---
+
+## 開始する前に
+
+### プロジェクトの現状確認
+
+**UnitTestsプロジェクトの構造**:
+```
+UnitTests/
+├── ApplicationCore/
+│   ├── LoanService/
+│   │   ├── ExtendLoan.cs
+│   │   └── ReturnLoan.cs
+│   └── PatronService/
+│       └── RenewMembership.cs
+├── LoanFactory.cs
+├── PatronFactory.cs
+└── UnitTests.csproj
+```
+
+**現在の対応状況**:
+- **完了**: Library.ApplicationCore/Services層のテスト
+- **今回実装**: Library.Infrastructure/Data層のテスト
+
+**使用技術**:
+- **xUnit**: .NET用テストフレームワーク
+- **NSubstitute**: モックオブジェクト生成ライブラリ
+- **GitHub Copilot**: AI支援によるテストコード生成
+
+---
+
+## 演習7: GitHub Copilot を使用して UnitTests プロジェクトを評価および拡張する
+
+### タスク1: 既存の単体テストアプローチの分析
+
+#### ステップ1: 既存テストパターンの理解
+
+1. **Visual Studio Codeの準備**
+   - AccelerateDevGitHubCopilotプロジェクトが開かれていることを確認
+   - エディターで開いているすべてのファイルを閉じる（**Ctrl + K, Ctrl + W**）
+
+2. **チャットビューを開く**
+   - **Ctrl + Alt + I** キーでチャットビューを開く
+   - 既存のチャット履歴をクリアして新しい会話を開始
+
+3. **分析対象ファイルをチャットコンテキストに追加**
+   以下のファイルをドラッグ&ドロップでチャットビューに追加：
+   
+   **テストファイル群**:
+   - `tests/UnitTests/LoanFactory.cs`
+   - `tests/UnitTests/PatronFactory.cs`
+   - `tests/UnitTests/ApplicationCore/LoanService/ExtendLoan.cs`
+   - `tests/UnitTests/ApplicationCore/LoanService/ReturnLoan.cs`
+   - `tests/UnitTests/ApplicationCore/PatronService/RenewMembership.cs`
+   
+   **実装ファイル群**:
+   - `src/Library.ApplicationCore/Services/LoanService.cs`
+   - `src/Library.ApplicationCore/Services/PatronService.cs`
+
+4. **テストアプローチの分析**
+   ```plaintext
+   @workspace このワークスペースで実装されている単体テストのアプローチについて説明してください。以下の観点で分析してください：
+   1. モックの使用方法
+   2. テストデータの作成パターン
+   3. テストケースの構成方法
+   4. アサーションの書き方
+   ```
+
+#### ステップ2: テストアプローチの利点確認
+
+1. **利点分析の実行**
+   ```plaintext
+   @workspace このテストアプローチにはどのような利点がありますか？コード品質、保守性、開発効率の観点から説明してください。
+   ```
+
+2. **GitHub Copilotの回答を確認**
+   以下のような分析結果が提示されることを確認：
+   
+   **主要な利点**:
+   - **依存関係の分離**: NSubstituteによるモック化で外部依存を排除
+   - **データ一貫性**: ファクトリーメソッドによる統一されたテストデータ生成
+   - **可読性**: 記述的なテストメソッド名とわかりやすい構造
+   - **包括的カバレッジ**: 成功ケースとエラーケースの両方をテスト
+   - **迅速なフィードバック**: 単体テストによる即座の品質確認
+
+#### ステップ3: 拡張戦略の検討
+
+1. **拡張方針の確認**
+   ```plaintext
+   @workspace UnitTestsプロジェクトをLibrary.Infrastructureプロジェクトのメソッドテストに拡張する方法について、プロセスの概要を教えてください。
+   ```
+
+2. **拡張手順の理解**
+   GitHub Copilotから以下のような手順が提示されることを確認：
+   
+   **基本的な拡張手順**:
+   1. **プロジェクト参照の追加**: UnitTests.csprojにLibrary.Infrastructureへの参照を追加
+   2. **テスト対象の特定**: データアクセス層のテスト対象メソッドを特定
+   3. **テストクラスの作成**: Infrastructure専用のテストクラス構造を構築
+   4. **単体テストの実装**: xUnitとNSubstituteを使用したテストコード作成
+   5. **テスト実行の確認**: Visual Studio CodeのTest Explorerでテスト実行
+
+---
+
+### タスク2: データアクセス層テストの実装
+
+#### ステップ1: プロジェクト参照の追加
+
+1. **UnitTests.csprojファイルを開く**
+   - ソリューションエクスプローラーで `tests/UnitTests/UnitTests.csproj` を開く
+
+2. **現在のプロジェクト参照を確認**
+   ```xml
+   <ItemGroup>
+     <ProjectReference Include="..\..\src\Library.ApplicationCore\Library.ApplicationCore.csproj" />
+   </ItemGroup>
+   ```
+
+3. **Library.Infrastructure参照の追加方法を確認**
+   - UnitTests.csprojファイルをチャットコンテキストに追加
+   - 以下のプロンプトを入力：
+   ```plaintext
+   @workspace UnitTests.csprojファイル内にLibrary.Infrastructureプロジェクトへの参照を追加する方法を説明してください。
+   ```
+
+4. **プロジェクトファイルの更新**
+   GitHub Copilotの指示に従って以下を追加：
+   ```xml
+   <ItemGroup>
+     <ProjectReference Include="..\..\src\Library.ApplicationCore\Library.ApplicationCore.csproj" />
+     <ProjectReference Include="..\..\src\Library.Infrastructure\Library.Infrastructure.csproj" />
+   </ItemGroup>
+   ```
+
+#### ステップ2: JsonLoanRepositoryクラスの分析
+
+1. **対象クラスの確認**
+   - `src/Library.Infrastructure/Data/JsonLoanRepository.cs` を開く
+
+2. **クラス構造の理解**
+   ```csharp
+   public class JsonLoanRepository : ILoanRepository
+   {
+       private readonly JsonData _jsonData;
+       
+       // GetLoan: ID指定で貸出情報を取得
+       public async Task<Loan?> GetLoan(int id)
+       
+       // UpdateLoan: 貸出情報を更新
+       public async Task UpdateLoan(Loan loan)
+   }
+   ```
+
+   **重要なポイント**:
+   - JsonDataクラスに依存してデータ操作を実行
+   - GetLoanは指定IDの貸出を返す（見つからない場合はnull）
+   - UpdateLoanは既存貸出の更新とデータ保存を実行
+
+#### ステップ3: テスト用フォルダー構造の作成
+
+1. **フォルダー構造の作成**
+   - `tests/UnitTests` フォルダー内に以下の構造を作成：
+   ```
+   UnitTests/
+   └── Infrastructure/
+       └── JsonLoanRepository/
+   ```
+
+2. **GetLoanテストクラスの作成**
+   - `JsonLoanRepository` フォルダー内に `GetLoan.cs` ファイルを作成
+
+#### ステップ4: GetLoanテストクラスの実装
+
+1. **基本構造の生成**
+   - 以下のファイルをチャットコンテキストに追加：
+     - `JsonLoanRepository.cs`
+     - `ReturnLoan.cs`（参考として）
+     - `LoanService.cs`（参考として）
+     - `LoanFactory.cs`
+     - `JsonData.cs`
+
+2. **フィールドとコンストラクターの生成**
+   ```plaintext
+   @workspace GetLoan.csファイルのフィールドとクラスコンストラクターを作成してください。このクラスはJsonLoanRepository.csファイルのGetLoanメソッドの単体テストに使用されます。以下のprivate readonlyフィールドを作成してください：_mockLoanRepository、_jsonLoanRepository、_configuration、_jsonData。GetLoanTestコンストラクターでこれらのフィールドをインスタンス化してください。JsonDataオブジェクトのインスタンス化にはConfigurationBuilderを使用してください。
+   ```
+
+3. **生成されたコードの確認と修正**
+   基本的な構造は以下のようになります：
+   ```csharp
+   using NSubstitute;
+   using Library.ApplicationCore;
+   using Library.ApplicationCore.Entities;
+   using Library.Infrastructure.Data;
+   using Microsoft.Extensions.Configuration;
+
+   namespace UnitTests.Infrastructure.JsonLoanRepositoryTests;
+
+   public class GetLoanTest
+   {
+       private readonly ILoanRepository _mockLoanRepository;
+       private readonly JsonLoanRepository _jsonLoanRepository;
+       private readonly IConfiguration _configuration;
+       private readonly JsonData _jsonData;
+
+       public GetLoanTest()
+       {
+           _mockLoanRepository = Substitute.For<ILoanRepository>();
+           _configuration = new ConfigurationBuilder().Build();
+           _jsonData = new JsonData(_configuration);
+           _jsonLoanRepository = new JsonLoanRepository(_jsonData);
+       }
+   }
+   ```
+
+   **修正ポイント**:
+   - 名前空間を `UnitTests.Infrastructure.JsonLoanRepositoryTests` に設定
+   - 必要なusing文の追加
+   - ConfigurationBuilderの簡略化
+
+#### ステップ5: テストメソッドの実装
+
+1. **成功ケースのテスト作成**
+   - 以下のファイルを追加でチャットコンテキストに追加：
+     - `Loans.json`（参照データとして）
+
+2. **GetLoan成功ケースの実装**
+   ```plaintext
+   @workspace 選択範囲を更新して、JsonLoanRepository.GetLoanメソッドの単体テストを含めてください。この単体テストは、データ内で貸出IDが見つかったケースをテストする必要があります。_mockLoanRepositoryを使用して期待される返却貸出を配置し、_jsonLoanRepositoryを使用して実際の貸出を返却してください。アサートでは、返却された貸出IDが期待される貸出IDと一致することを確認してください。Loans.jsonファイルに存在する貸出IDを使用してください。
+   ```
+
+3. **生成されたテストメソッドの確認**
+   ```csharp
+   [Fact(DisplayName = "JsonLoanRepository.GetLoan: データに貸出IDが存在する場合に貸出を返す")]
+   public async Task GetLoan_ReturnsLoanWhenLoanIdIsFound()
+   {
+       // Arrange
+       var loanId = 1; // Loans.jsonファイルに存在する貸出IDを使用
+       var expectedLoan = new Loan { 
+           Id = loanId, 
+           BookItemId = 101, 
+           PatronId = 202, 
+           LoanDate = DateTime.Now, 
+           DueDate = DateTime.Now.AddDays(14) 
+       };
+       _mockLoanRepository.GetLoan(loanId).Returns(expectedLoan);
+       
+       // Act
+       var actualLoan = await _jsonLoanRepository.GetLoan(loanId);
+       
+       // Assert
+       Assert.NotNull(actualLoan);
+       Assert.Equal(expectedLoan.Id, actualLoan?.Id);
+   }
+   ```
+
+4. **失敗ケースのテスト作成**
+   GitHub Copilotのオートコンプリート機能を使用：
+   - GetLoan_ReturnsLoanWhenLoanIdIsFoundメソッドの後に空行を作成
+   - GitHub Copilotの提案を確認して以下のようなテストを作成：
+
+   ```csharp
+   [Fact(DisplayName = "JsonLoanRepository.GetLoan: 貸出IDが見つからない場合にnullを返す")]
+   public async Task GetLoan_ReturnsNullWhenLoanIdIsNotFound()
+   {
+       // Arrange
+       var loanId = 999; // Loans.jsonファイルに存在しない貸出IDを使用
+       
+       // Act
+       var actualLoan = await _jsonLoanRepository.GetLoan(loanId);
+       
+       // Assert
+       Assert.Null(actualLoan);
+   }
+   ```
+
+#### ステップ6: JSONデータファイルの参照設定
+
+1. **UnitTests.csprojの更新**
+   テストでJSONファイルにアクセスするため、以下を追加：
+   ```xml
+   <ItemGroup>
+       <None Include="..\..\src\Library.Console\Json\**\*">
+           <Link>Json\%(RecursiveDir)%(FileName)%(Extension)</Link>
+           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+       </None>
+   </ItemGroup>
+   ```
+
+   **重要**: この設定により、テスト実行時にJSONファイルが出力ディレクトリにコピーされます。
+
+---
+
+### タスク3: テストの実行と確認
+
+#### ステップ1: ビルドとエラーチェック
+
+1. **ソリューションのビルド**
+   - ソリューションエクスプローラーで **AccelerateDevGitHubCopilot** を右クリック
+   - **「ビルド」** を選択
+   - エラーがないことを確認（警告は無視）
+
+#### ステップ2: テスト実行
+
+1. **Test Explorerの使用**
+   - 左サイドバーの**ビーカーアイコン**（テスト）をクリック
+   - **「UnitTests」** ノードを展開
+   - **「Infrastructure」** → **「JsonLoanRepositoryTests」** → **「GetLoanTest」** を展開
+
+2. **個別テストの実行**
+   - **「JsonLoanRepository.GetLoan: データに貸出IDが存在する場合に貸出を返す」** テストを実行
+   - テスト結果で緑色のチェックマークが表示されることを確認
+
+3. **エディターからの実行**
+   - GetLoan.csファイルを開く
+   - テストメソッドの左側にある**緑色の再生ボタン**をクリック
+   - テスト結果がエディター内に表示されることを確認
+
+#### ステップ3: 両方のテストケースの確認
+
+1. **成功ケースの確認**
+   - 存在する貸出IDでのテストが成功することを確認
+
+2. **失敗ケースの確認**
+   - 存在しない貸出IDでのテストが成功（nullが正しく返される）することを確認
+
+3. **テスト結果の分析**
+   - 両方のテストに緑色のチェックマークが表示されることを確認
+   - Test Explorerでテスト実行時間や詳細結果を確認
+
+---
+
+## 演習7まとめ
+
+### 達成した内容
+
+1. **既存テストアプローチの理解**
+   - モック化パターンの分析
+   - ファクトリーメソッドの利用方法
+   - テストデータ作成の一貫性確保
+
+2. **Infrastructure層テストの実装**
+   - プロジェクト参照の正しい設定
+   - JsonLoanRepositoryクラスの包括的テスト
+   - 成功・失敗両ケースの適切なテストカバレッジ
+
+3. **テスト実行環境の構築**
+   - JSONデータファイルの正しい参照設定
+   - Visual Studio Code Test Explorerの活用
+   - 継続的なテスト実行フローの確立
+
+### 学習ポイント
+
+**GitHub Copilotの効果的活用**:
+- テストコード生成の高速化
+- 適切なアサーション手法の提案
+- テストケースの網羅的な生成支援
+
+**単体テストのベストプラクティス**:
+- 外部依存の適切なモック化
+- テストデータの一貫した管理
+- 可読性の高いテストメソッド命名
+
+**データアクセステストの重要性**:
+- インフラストラクチャ層の品質保証
+- JSONデータ操作の正確性確認
+- エラーハンドリングの検証
+
+---
+
+## 次のステップ
+
+演習7では、JsonLoanRepositoryクラスの基本的なテストを実装しました。次の段階では、以下の拡張を検討してください：
+
+1. **JsonPatronRepositoryクラスのテスト実装**
+2. **JsonDataクラスの包括的テスト**
+3. **UpdateLoanメソッドの詳細テスト**
+4. **エラーケースの追加テスト**
+
+これらのテストを通じて、図書館管理システム全体の品質と信頼性を大幅に向上させることができます。
