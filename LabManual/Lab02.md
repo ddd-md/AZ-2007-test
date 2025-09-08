@@ -309,10 +309,10 @@ GitHub Copilotからの提案に基づいて、以下の更新を行ってくだ
 
 3. **必要なusing文の追加**
    ```csharp
-   using Library.Infrastructure.Data;
-   using Library.ApplicationCore.Entities;
+    using Library.Infrastructure.Data;
+    using Microsoft.Extensions.Configuration;
    ```
-
+ - **注意**: 必要に応じてusing文を追加してください
 ### ステップ5: 依存関係の確認と修正
 
 1. **Program.csの確認**
@@ -324,7 +324,7 @@ GitHub Copilotからの提案に基づいて、以下の更新を行ってくだ
 
 2. **ビルドエラーの確認**
    - **Ctrl + Shift + P** → **「Tasks: Run Build Task」** を実行
-   - または ソリューションエクスプローラーで **AccelerateDevGitHubCopilot** を右クリック → **「ビルド」**
+   - または ソリューションエクスプローラーで **GuidedProjectApp** を右クリック → **「ビルド」**
 
 3. **エラーの修正**
    - using文の不足やコンストラクターパラメーターの不一致があれば修正
@@ -337,12 +337,12 @@ GitHub Copilotからの提案に基づいて、以下の更新を行ってくだ
 ### ステップ1: アプリケーションの準備
 
 1. **ソリューションをクリーン**
-   - ソリューションエクスプローラーで **AccelerateDevGitHubCopilot** を右クリック
+   - ソリューションエクスプローラーで **GuidedProjectApp** を右クリック
    - **「クリーン」** を選択
    - ビルドキャッシュをクリアして確実に最新コードで実行
 
 2. **ソリューションをビルド**
-   - 再度 **AccelerateDevGitHubCopilot** を右クリック
+   - 再度 **GuidedProjectApp** を右クリック
    - **「ビルド」** を選択
    - エラーがないことを確認
 
@@ -474,7 +474,7 @@ GitHub Copilotからの提案に基づいて、以下の更新を行ってくだ
    - **「Files changed」** タブで差分を確認
 
 3. **プルリクエストのマージ**
-   - **「Merge pull request」** ボタンをクリック
+   - **「Conversation」** タブで **「Merge pull request」** ボタンをクリック
    - マージ方法は **「Create a merge commit」** を選択（デフォルト）
    - **「Confirm merge」** ボタンをクリック
 
