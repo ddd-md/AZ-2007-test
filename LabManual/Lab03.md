@@ -193,7 +193,7 @@ UnitTests/
 
 2. **フィールドとコンストラクターの生成**
    ```plaintext
-   @workspace GetLoan.csファイルのフィールドとクラスコンストラクターを作成してください。このクラスはJsonLoanRepository.csファイルのGetLoanメソッドの単体テストに使用されます。以下のprivate readonlyフィールドを作成してください：_mockLoanRepository、_jsonLoanRepository、_configuration、_jsonData。GetLoanTestコンストラクターでこれらのフィールドをインスタンス化してください。JsonDataオブジェクトのインスタンス化にはConfigurationBuilderを使用してください。
+   @workspace GetLoan.csファイルのフィールドとクラスコンストラクターを作成してください。namespace はUnitTests.Infrastructure.JsonLoanRepositoryTestsとしてください。このクラスはJsonLoanRepository.csファイルのGetLoanメソッドの単体テストに使用されます。以下のprivate readonlyフィールドを作成してください：_mockLoanRepository、_jsonLoanRepository、_configuration、_jsonData。GetLoanTestコンストラクターでこれらのフィールドをインスタンス化してください。JsonDataオブジェクトのインスタンス化にはConfigurationBuilderを使用してください。
    ```
 
 3. **生成されたコードの確認と修正**
@@ -229,11 +229,31 @@ UnitTests/
    - 必要なusing文の追加
    - ConfigurationBuilderの簡略化
 
+    > **GitHub Copilotが AddJsonFile を提案した場合の対処法**
+    > 
+    > GitHub Copilotが以下のようなコードを提案することがあります：
+    > ```csharp
+    > _configuration = new ConfigurationBuilder()
+    >     .AddJsonFile("appSettings.json", optional: true)
+    >     .Build();
+    > ```
+    > 
+    > **この場合は以下のエラーが発生します：**
+    > ```
+    > 'ConfigurationBuilder' に 'AddJsonFile' の定義が含まれておらず...
+    > ```
+    > 
+    > **解決方法（推奨）**: テスト用に簡略化してください
+    > ```csharp
+    > _configuration = new ConfigurationBuilder().Build();
+    > ```
+
 #### ステップ5: テストメソッドの実装
 
 1. **成功ケースのテスト作成**
    - 以下のファイルを追加でチャットコンテキストに追加：
      - `Loans.json`（参照データとして）
+   - GetLoan.cs内のプログラムを全選択状態にする
 
 2. **GetLoan成功ケースの実装**
    ```plaintext
@@ -242,7 +262,7 @@ UnitTests/
 
 3. **生成されたテストメソッドの確認**
    ```csharp
-   [Fact(DisplayName = "JsonLoanRepository.GetLoan: データに貸出IDが存在する場合に貸出を返す")]
+   [Fact(DisplayName = "JsonLoanRepository.GetLoan: Returns loan when loan ID exists in data")]
    public async Task GetLoan_ReturnsLoanWhenLoanIdIsFound()
    {
        // Arrange
@@ -307,7 +327,7 @@ UnitTests/
 #### ステップ1: ビルドとエラーチェック
 
 1. **ソリューションのビルド**
-   - ソリューションエクスプローラーで **AccelerateDevGitHubCopilot** を右クリック
+   - ソリューションエクスプローラーで **GuidedProjectApp** を右クリック
    - **「ビルド」** を選択
    - エラーがないことを確認（警告は無視）
 
